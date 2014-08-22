@@ -24,7 +24,7 @@
 	
 	----HOW TO USE-----
 	Create a pseudo-random ChoiceRNG like this:	
-	NOTE: The probabilities HAVE to add up to 1!
+	NOTE: The input probabilities should add up to 1!
 	
 	local choiceRNG = ChoicePseudoRNG.create( {0.2, 0.1, 0.3, 0.4} ) -- Adds 4 items with percentages 20%, 10%, 30% and 40%
 	
@@ -118,7 +118,7 @@ end
 ------------------------------------
 ChoicePseudoRNG = {}
 ChoicePseudoRNG.__index = ChoicePseudoRNG
---construct a ChoicePseudoRNG from a list of probabilities, they HAVE to add up to 1 though!
+--construct a ChoicePseudoRNG from a list of probabilities, they should add up to 1 .
 function ChoicePseudoRNG.create( probs )
    local rng = {}             -- our new object
    setmetatable(rng, ChoicePseudoRNG)
@@ -130,12 +130,14 @@ end
 function ChoicePseudoRNG:Init( probs )
 	self.probs = {} --the probability the drop should be around
 	self.curProbs = {} --the current probability
-	self.min = {} --the minimum value for this probability
+	self.cons = {} --the minimum value for this probability
+	self.total = 0
 	
 	for _,chance in pairs( probs ) do
 		self.probs[#self.probs+1] = chance
 		self.curProbs[#self.curProbs+1] = chance
-		self.min[#self.min+1] = PseudoRNG:CFromP( chance ) -- calculate the minimum
+		self.cons[#self.cons+1] = PseudoRNG:CFromP( chance ) -- calculate the minimum
+		self.total = self.total + chance
 	end
 		
 	--scramble the distribution a bit before using
@@ -146,10 +148,10 @@ end
 
 --Use this to choose one of the elements, returns the index of the chosen item (starts at 1!)
 function ChoicePseudoRNG:Choose()
-	local rand = math.random()
+	local rand = math.random() * self.total
 	local cumulative = 0
 	
-	local choice = #self.min
+	local choice = #self.cons
 	
 	--loop over all probabilities we have
 	for i=1,#self.probs do
@@ -164,31 +166,21 @@ function ChoicePseudoRNG:Choose()
 		end
 	end
 	
-	--Set the chosen index to its minimum probability and calculate how much we have to redistribute
-	local redistrib = self.curProbs[choice] - self.min[choice]
-	self.curProbs[choice] = self.min[choice]
+	--reduce the probability of the item we just chose
+	self.curProbs[choice] = self.cons[choice]
+	
+	--update our total value
+	self.total = self.cons[choice]
 	
 	--distribute the 'extra probability' we got from our choice over all indices we didn't choose
-	for i=1,#self.min do
+	for i=1,#self.cons do
 		if i ~= choice then
-			--we base the amount we give on how large the index's original probability is
-			self.curProbs[i] = self.curProbs[i] + redistrib * self.probs[i]/(1-self.probs[choice])
+			--use the P(N) = C * N formula to set a new percentage for each non-chosen element
+			self.curProbs[i] = self.curProbs[i] + self.cons[i]
+			--add this to the total
+			self.total = self.total + self.curProbs[i]
 		end
 	end
 	
 	return choice
-end
-
---check if our RNG is still valid
-function ChoicePseudoRNG:IsValid()
-	local total = 0
-	for i=1,#self.min do
-		total = total + self.curProbs[i]
-	end
-	
-	if total ~= 1 then
-		return false
-	else
-		return true
-	end
 end
