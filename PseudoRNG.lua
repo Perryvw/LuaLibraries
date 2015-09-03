@@ -42,11 +42,11 @@ PseudoRNG.__index = PseudoRNG
 
 --construct a PseudoRNG for a certain chance (0 - 1; 25% -> 0.25)
 function PseudoRNG.create( chance )
-   local rng = {}             -- our new object
-   setmetatable(rng, PseudoRNG)
+	local rng = {}             -- our new object
+	setmetatable(rng, PseudoRNG)
    
-   rng:Init( chance )
-   return rng
+	rng:Init( chance )
+	return rng
 end
 
 function PseudoRNG:Init( chance )
@@ -102,7 +102,7 @@ end
 function PseudoRNG:Next()
 	-- P(N) = C * N
 	local P = self.cons * (self.failedTries + 1)
-	if math.random() <= P then
+	if RandomFloat( 0, 1 ) <= P then
 		--success!
 		self.failedTries = 0
 		return true
@@ -120,11 +120,11 @@ ChoicePseudoRNG = {}
 ChoicePseudoRNG.__index = ChoicePseudoRNG
 --construct a ChoicePseudoRNG from a list of probabilities, they should add up to 1 .
 function ChoicePseudoRNG.create( probs )
-   local rng = {}             -- our new object
-   setmetatable(rng, ChoicePseudoRNG)
+	local rng = {}             -- our new object
+	setmetatable(rng, ChoicePseudoRNG)
    
-   rng:Init( probs )
-   return rng
+	rng:Init( probs )
+	return rng
 end
 
 function ChoicePseudoRNG:Init( probs )
@@ -148,7 +148,7 @@ end
 
 --Use this to choose one of the elements, returns the index of the chosen item (starts at 1!)
 function ChoicePseudoRNG:Choose()
-	local rand = math.random() * self.total
+	local rand = RandomFloat( 0, 1 ) * self.total
 	local cumulative = 0
 	
 	local choice = #self.cons
