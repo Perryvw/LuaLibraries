@@ -41,6 +41,8 @@
 				Default: Vector( 1, 0, 0 )
 			* scale - (Optional) The scale of the attachment model.
 				Default: 1
+			* animation - (Optional) The animation of the model.
+				Default: ''
 
 		Returns: The attachment entity that was created.
 	---------------------------------------------------------------------------------------------------------------------------
@@ -68,9 +70,10 @@
 	local offset = Vector( 50, 0, 0 )
 	local direction = Vector( 0, 0, 1 )
 	local scale = 2
+	local animation = 'bindPose'
 
 	local attachment = AttachManager:AttachModel( unit, 'models/items/enchantress/anuxi_summer_spear/anuxi_summer_spear.vmdl', 
-		'attach_attack1', offset, direction, scale )
+		'attach_attack1', offset, direction, scale, animation )
 
 	--=========================================================================================================================
 
@@ -131,15 +134,18 @@ function AttachManager:AddModel( modelName, initialOffset, initialDirection )
 end
 
 --Create an attachment
-function AttachManager:AttachModel( unit, modelName, parent, offset, direction, scale )
+function AttachManager:AttachModel( unit, modelName, parent, offset, direction, scale, animation )
 	--Check if the model is in the model library
 	if AttachManager.models[ modelName ] == nil then
 		Warning( '[AttachManager] Attachment with model '..modelname..' not found. Use AddModel( model[, initialOffset, initialDirection]) to add it first.' )
 		return
 	end
 
+	--Animation default
+	local animation = animation or ''
+
 	--Create the attachment
-	local attachment = Entities:CreateByClassname( 'prop_dynamic' )
+	local attachment = SpawnEntityFromTableSynchronous( 'prop_dynamic', {model = modelName, DefaultAnim = animation })
 
 	--Set attachment values
 	attachment.unit = unit
