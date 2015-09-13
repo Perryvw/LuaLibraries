@@ -6,8 +6,7 @@
 	By: Perry
 	Date: September, 2015
 
-	API:
-
+	Interface:
 	---------------------------------------------------------------------------------------------------------------------------
 	AttachManager:DrawAxes( unit, attachment, duration, scale )
 		Draw an axis system at a unit's attachment with a scale. Automatically disappears after some duration.
@@ -111,7 +110,6 @@ function AttachManager:DrawAxes( unit, attachment, duration, scale )
 		DebugDrawLine( attachPos, attachPos + xAxis, 255, 0, 0, false, 0.02 )
 		DebugDrawLine( attachPos, attachPos + yAxis, 0, 255, 0, false, 0.02 )
 		DebugDrawLine( attachPos, attachPos + zAxis, 0, 0, 255, false, 0.02 )
-		DebugDrawLine( attachPos, attachPos + xAxis+yAxis, 200, 200, 200, false, 0.02 )
 
 		--Enforce duration
 		if GameRules:GetGameTime() - timerStart < duration then
