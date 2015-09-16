@@ -1,8 +1,15 @@
 LuaLibraries
 ============
 
-Some useful lua libraries for dota 2 addons
+Some useful lua libraries for Dota 2 addons.
 
-You can use these libraries by requiring them in addon_init.lua.
+Currently available libraries:
+- PseudoRNG - A library implementing random number generators using a pseudo-random distribution. For more details see http://dota2.gamepedia.com/Pseudo-random_distribution.
+- AttachManager - Provides a way of *reliably* attaching models to unit attachments.
+- MotionControllers - A small library providing a nice interface for prioritising modifiers that perform a motion. Useful when you need some modifiers' motion to be prioritised over others.
+- API-JSONDumper - Dumps an object to the JSON format, can be used to dump the dota lua API by dumping _G.
 
-To use PseudoRNG.lua for example, in addon_init.lua add 'require("PseudoRNG")'
+Detailed documentation for each library can be found in the library file.
+
+You can use these libraries by requiring them.
+To use PseudoRNG.lua for example, in addon_game_mode.lua add 'require("PseudoRNG")'
