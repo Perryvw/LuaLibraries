@@ -44,6 +44,10 @@ PseudoRNG.__index = PseudoRNG
 function PseudoRNG.create( chance )
 	local rng = {}             -- our new object
 	setmetatable(rng, PseudoRNG)
+
+	if chance < 0.0001 then
+		print("[PseudoRNG] Warning, chance is extremely low. Are you sure you intended chance = " .. chance .. "?")
+	end
    
 	rng:Init( chance )
 	return rng
